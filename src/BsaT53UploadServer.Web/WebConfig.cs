@@ -36,7 +36,7 @@ namespace BsaT53UploadServer.Web
         /// 
         /// If the requested URL does not match this, the request will 400.
         /// </summary>
-        public Uri? DefaultBaseUri { get; init; } = null;
+        public Uri BaseUri { get; init; } = new Uri( "http://localhost" );
 
         /// <summary>
         /// If the given request has a port in
@@ -103,7 +103,7 @@ namespace BsaT53UploadServer.Web
             {
                 settings = settings with
                 {
-                    DefaultBaseUri = new Uri( baseUrl )
+                    BaseUri = new Uri( baseUrl )
                 };
             }
 
@@ -155,6 +155,11 @@ namespace BsaT53UploadServer.Web
                 {
                     errors.Add( $"{nameof( config.MetricsUrl )} must be 2 or greater characters.  Got: {config.MetricsUrl}" );
                 }
+            }
+
+            if( config.BaseUri is null )
+            {
+                errors.Add( $"{nameof( config.BaseUri )} must be specified." );
             }
 
             if( errors.Any() )
