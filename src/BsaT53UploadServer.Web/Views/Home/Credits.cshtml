@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Third-Party Credtis";
+    ViewData["Description"] = "Kakama's Third-Party Credits";
+    ViewData["keywords"] = "activity,credits,dotnet,foss,kakama,open,pub,source";
+}
+
+@model HomeModel
+
+@{
+    string html = MarkdownToHtmlConverter.Convert( Resources.GetCredits() );
+}
+
+<div class="content">
+    @Html.Raw( html )
+</div>

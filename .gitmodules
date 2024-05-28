@@ -1,0 +1,3 @@
+[submodule "sethcs"]
+	path = sethcs
+	url = https://github.com/xforever1313/sethcs.git

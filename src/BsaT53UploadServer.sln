@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BsaT53UploadServer.Web", "BsaT53UploadServer.Web\BsaT53UploadServer.Web.csproj", "{A6F32AAB-9FA6-4178-8CF7-A96337FDFBD1}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SethCS", "..\sethcs\SethCS\SethCS.shproj", "{52089274-B9A2-4A47-A221-C321DEE1CE7F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSethCS", "..\sethcs\LibSethCS\LibSethCS.csproj", "{91112AC3-8E75-4D04-96C9-A38EF64EA03B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seth.Analyzer", "..\sethcs\Seth.Analyzer\Seth.Analyzer.csproj", "{C7275AA4-B4C7-43C1-9377-91411AA817BF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A6F32AAB-9FA6-4178-8CF7-A96337FDFBD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6F32AAB-9FA6-4178-8CF7-A96337FDFBD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6F32AAB-9FA6-4178-8CF7-A96337FDFBD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6F32AAB-9FA6-4178-8CF7-A96337FDFBD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91112AC3-8E75-4D04-96C9-A38EF64EA03B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91112AC3-8E75-4D04-96C9-A38EF64EA03B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91112AC3-8E75-4D04-96C9-A38EF64EA03B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91112AC3-8E75-4D04-96C9-A38EF64EA03B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7275AA4-B4C7-43C1-9377-91411AA817BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7275AA4-B4C7-43C1-9377-91411AA817BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7275AA4-B4C7-43C1-9377-91411AA817BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7275AA4-B4C7-43C1-9377-91411AA817BF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1BA285E5-CDC8-480C-8613-282FB6AB5B6C}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SethCS\SethCS\SethCS.projitems*{52089274-b9a2-4a47-a221-c321dee1ce7f}*SharedItemsImports = 13
+		..\SethCS\SethCS\SethCS.projitems*{91112ac3-8e75-4d04-96c9-a38ef64ea03b}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

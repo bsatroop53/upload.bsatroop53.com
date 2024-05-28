@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "License";
+    ViewData["Description"] = "Kakama's License (AGPL-3.0)";
+    ViewData["keywords"] = "activity,agpl,dotnet,foss,license,open,source";
+}
+
+@model HomeModel
+
+@{
+    string html = MarkdownToHtmlConverter.Convert( Resources.GetLicense() );
+}
+
+<div class="content">
+    @Html.Raw( html )
+</div>
