@@ -37,6 +37,7 @@ namespace DevOps
             this.ZipFilesDistFolder = this.DistFolder.Combine( "zip" );
             this.TestResultsFolder = this.RepoRoot.Combine( "TestResults" );
             this.WebCsProj = this.SrcDir.CombineWithFilePath( "BsaT53UploadServer.Web/BsaT53UploadServer.Web.csproj" );
+            this.TestCsProj = this.SrcDir.CombineWithFilePath( "BsaT53UploadServer.Tests/BsaT53UploadServer.Tests.csproj" );
         }
 
         // ---------------- Properties ----------------
@@ -56,5 +57,7 @@ namespace DevOps
         public DirectoryPath ZipFilesDistFolder { get; }
 
         public FilePath WebCsProj { get; }
+        
+        public FilePath TestCsProj { get; }
     }
 }
