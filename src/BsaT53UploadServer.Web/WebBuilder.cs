@@ -1,6 +1,6 @@
 ﻿//
-// Kakama - An ActivityPub Bot Framework
-// Copyright (C) 2023-2024 Seth Hendrick
+// BSA Troop 53 Upload Server
+// Copyright (C) 2024 Seth Hendrick
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Affero General Public License as published
@@ -46,7 +46,7 @@ namespace BsaT53UploadServer.Web
         /// <remarks>
         /// This is null until <see cref="Run"/> is called.
         /// </remarks>
-        private Serilog.ILogger? uploadNotificationLog;
+        private Serilog.ILogger? notificationLog;
 
         /// <remarks>
         /// This is null until <see cref="Run"/> is called.
@@ -160,7 +160,7 @@ namespace BsaT53UploadServer.Web
             }
 
             this.statusLog = CreateLog( webConfig, logCounter,Serilog.Events.LogEventLevel.Warning );
-            this.uploadNotificationLog = CreateLog( webConfig, logCounter, Serilog.Events.LogEventLevel.Information );
+            this.notificationLog = CreateLog( webConfig, logCounter, Serilog.Events.LogEventLevel.Information );
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder( args );
             builder.Services.AddSingleton( webConfig );
