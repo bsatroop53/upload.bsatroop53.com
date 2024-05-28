@@ -62,6 +62,12 @@ Disallow: /"
             );
         }
 
+        [Route( "/privacy.html" )]
+        public IActionResult Privacy()
+        {
+            return Redirect( "https://edit.bsatroop53.com/privacy" );
+        }
+
         [ResponseCache( Duration = 0, Location = ResponseCacheLocation.None, NoStore = true )]
         public IActionResult Error()
         {
