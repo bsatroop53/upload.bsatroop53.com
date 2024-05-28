@@ -31,17 +31,8 @@ namespace BsaT53UploadServer.Web.Api
 
         public BsaT53ServerConfig( string executingAssemblyLocation )
         {
-            string? directory = Path.GetDirectoryName( executingAssemblyLocation );
-            if( string.IsNullOrWhiteSpace( directory ) )
-            {
-                throw new ArgumentException(
-                    "Unable to get directory of executing assembly",
-                    nameof( executingAssemblyLocation )
-                );
-            }
-
             this.FileUploadLocation = new DirectoryInfo(
-                Path.Combine( directory, "t53files" )
+                Path.Combine( executingAssemblyLocation, "t53files" )
             );
         }
 
