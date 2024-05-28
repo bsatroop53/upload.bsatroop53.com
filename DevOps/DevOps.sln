@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DevOps", "DevOps\DevOps.csproj", "{133B8B3C-F92E-4CE9-BE06-A2572FCCB1C6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Seth.CakeLib", "..\SethCS\Seth.CakeLib\Seth.CakeLib.csproj", "{DC94C98C-3DFC-48F5-98AC-E034EBD60178}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibSethCS", "..\SethCS\LibSethCS\LibSethCS.csproj", "{0C2CBFB5-EE92-47BD-A5B9-733D7412D72E}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SethCS", "..\SethCS\SethCS\SethCS.shproj", "{52089274-B9A2-4A47-A221-C321DEE1CE7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{133B8B3C-F92E-4CE9-BE06-A2572FCCB1C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{133B8B3C-F92E-4CE9-BE06-A2572FCCB1C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{133B8B3C-F92E-4CE9-BE06-A2572FCCB1C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{133B8B3C-F92E-4CE9-BE06-A2572FCCB1C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC94C98C-3DFC-48F5-98AC-E034EBD60178}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC94C98C-3DFC-48F5-98AC-E034EBD60178}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC94C98C-3DFC-48F5-98AC-E034EBD60178}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC94C98C-3DFC-48F5-98AC-E034EBD60178}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C2CBFB5-EE92-47BD-A5B9-733D7412D72E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C2CBFB5-EE92-47BD-A5B9-733D7412D72E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C2CBFB5-EE92-47BD-A5B9-733D7412D72E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C2CBFB5-EE92-47BD-A5B9-733D7412D72E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\SethCS\SethCS\SethCS.projitems*{0c2cbfb5-ee92-47bd-a5b9-733d7412d72e}*SharedItemsImports = 5
+		..\SethCS\SethCS\SethCS.projitems*{52089274-b9a2-4a47-a221-c321dee1ce7f}*SharedItemsImports = 13
+	EndGlobalSection
+EndGlobal
