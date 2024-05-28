@@ -160,8 +160,18 @@ namespace BsaT53UploadServer.Web
                 this.metrics = new ServerMetrics( logCounter );
             }
 
-            this.statusLog = CreateLog( webConfig, logCounter,Serilog.Events.LogEventLevel.Warning );
-            this.notificationLog = CreateLog( webConfig, logCounter, Serilog.Events.LogEventLevel.Information );
+            this.statusLog = CreateLog(
+                webConfig,
+                logCounter,
+                Serilog.Events.LogEventLevel.Warning,
+                true
+            );
+            this.notificationLog = CreateLog(
+                webConfig,
+                logCounter,
+                Serilog.Events.LogEventLevel.Information,
+                false
+            );
 
             using BsaT53UploadApi api = new BsaT53UploadApi( this.statusLog, this.notificationLog, webConfig );
             api.Init();
@@ -261,7 +271,8 @@ namespace BsaT53UploadServer.Web
         private Serilog.ILogger CreateLog(
             BsaT53ServerConfig webConfig,
             LogMessageCounter? logCounter,
-            Serilog.Events.LogEventLevel telegramEventLevel
+            Serilog.Events.LogEventLevel telegramEventLevel,
+            bool printEnabledLogs
         )
         {
             var logger = new LoggerConfiguration()
@@ -310,8 +321,11 @@ namespace BsaT53UploadServer.Web
             }
 
             Serilog.ILogger log = logger.CreateLogger();
-            log.Information( $"Using File Logging: {useFileLogger}." );
-            log.Information( $"Using Telegram Logging: {useTelegramLogger}." );
+            if( printEnabledLogs )
+            {
+                log.Information( $"Using File Logging: {useFileLogger}." );
+                log.Information( $"Using Telegram Logging: {useTelegramLogger}." );
+            }
 
             return log;
         }

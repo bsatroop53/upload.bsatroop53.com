@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SethCS\LibSethCS\LibSethCS.csproj" />
-    <ProjectReference Include="..\..\SethCS\Seth.CakeLib\Seth.CakeLib.csproj" />
+    <ProjectReference Include="..\..\sethcs\LibSethCS\LibSethCS.csproj" />
+    <ProjectReference Include="..\..\sethcs\Seth.CakeLib\Seth.CakeLib.csproj" />
   </ItemGroup>
 
 </Project>
