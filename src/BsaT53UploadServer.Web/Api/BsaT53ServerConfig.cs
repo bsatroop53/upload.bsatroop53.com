@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System.Reflection;
 using SethCS.Exceptions;
 
 namespace BsaT53UploadServer.Web.Api
@@ -26,7 +25,7 @@ namespace BsaT53UploadServer.Web.Api
         // ---------------- Constructor ----------------
 
         public BsaT53ServerConfig()
-            : this( Assembly.GetExecutingAssembly().Location )
+            : this( AppContext.BaseDirectory )
         {
         }
 
