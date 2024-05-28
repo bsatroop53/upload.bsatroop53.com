@@ -73,6 +73,11 @@ namespace BsaT53UploadServer.Web.Api
 
         public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent )
         {
+            return await TryUpload( file, userAgent, Stopwatch.GetTimestamp );
+        }
+
+        public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent, Func<long> getTimeStamp )
+        {
             if( this.config.T53UploadUserAgent is not null )
             {
                 if( userAgent != this.config.T53UploadUserAgent )
@@ -90,7 +95,7 @@ namespace BsaT53UploadServer.Web.Api
             }
 
             string fileName = file.FileName;
-            if( Path.GetExtension( fileName ) != ".bsat53" == false )
+            if( Path.GetExtension( fileName ) != ".bsat53" )
             {
                 return UploadStatus.InvalidFileExtension;
             }
@@ -102,7 +107,7 @@ namespace BsaT53UploadServer.Web.Api
                 return UploadStatus.InvalidFileType;
             }
 
-            string newFileName = $"{Stopwatch.GetTimestamp()}_{file.FileName}";
+            string newFileName = $"{getTimeStamp()}_{file.FileName}";
 
             if( invalidCharacters.IsMatch( newFileName ) )
             {
