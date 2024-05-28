@@ -30,7 +30,7 @@ namespace BsaT53UploadServer.Web.Controllers
         {
         }
 
-        // ---------------- Functions ----------------
+        // ---------------- Methods ----------------
 
         [Route( "/" )]
         public IActionResult Index()
@@ -48,6 +48,18 @@ namespace BsaT53UploadServer.Web.Controllers
         public IActionResult Credits()
         {
             return View( new HomeModel() );
+        }
+
+        [Route( "/robots.txt" )]
+        public IActionResult RobotsTxt()
+        {
+            this.Response.ContentType = "text/plain";
+
+            // Don't want any search bots; there's nothing to index here.
+            return Ok(
+@"User-agent: *
+Disallow: /"
+            );
         }
 
         [ResponseCache( Duration = 0, Location = ResponseCacheLocation.None, NoStore = true )]

@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using BsaT53UploadServer.Web.Api;
 using BsaT53UploadServer.Web.Logging;
 using dotenv.net;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -150,7 +151,7 @@ namespace BsaT53UploadServer.Web
 
         private void RunInternal()
         {
-            WebConfig webConfig = WebConfigExtensions.FromEnvVar();
+            BsaT53ServerConfig webConfig = WebConfigExtensions.FromEnvVar();
 
             LogMessageCounter? logCounter = null;
             if( webConfig.MetricsUrl is not null )
@@ -162,8 +163,12 @@ namespace BsaT53UploadServer.Web
             this.statusLog = CreateLog( webConfig, logCounter,Serilog.Events.LogEventLevel.Warning );
             this.notificationLog = CreateLog( webConfig, logCounter, Serilog.Events.LogEventLevel.Information );
 
+            using BsaT53UploadApi api = new BsaT53UploadApi( this.statusLog, this.notificationLog, webConfig );
+            api.Init();
+
             WebApplicationBuilder builder = WebApplication.CreateBuilder( args );
             builder.Services.AddSingleton( webConfig );
+            builder.Services.AddSingleton( api );
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -254,7 +259,7 @@ namespace BsaT53UploadServer.Web
         }
 
         private Serilog.ILogger CreateLog(
-            WebConfig webConfig,
+            BsaT53ServerConfig webConfig,
             LogMessageCounter? logCounter,
             Serilog.Events.LogEventLevel telegramEventLevel
         )

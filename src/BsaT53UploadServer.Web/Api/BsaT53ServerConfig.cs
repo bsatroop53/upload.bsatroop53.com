@@ -16,13 +16,67 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Reflection;
 using SethCS.Exceptions;
 
-namespace BsaT53UploadServer.Web
+namespace BsaT53UploadServer.Web.Api
 {
-    public record class WebConfig
+    public record class BsaT53ServerConfig
     {
+        // ---------------- Constructor ----------------
+
+        public BsaT53ServerConfig()
+            : this( Assembly.GetExecutingAssembly().Location )
+        {
+        }
+
+        public BsaT53ServerConfig( string executingAssemblyLocation )
+        {
+            string? directory = Path.GetDirectoryName( executingAssemblyLocation );
+            if( string.IsNullOrWhiteSpace( directory ) )
+            {
+                throw new ArgumentException(
+                    "Unable to get directory of executing assembly",
+                    nameof( executingAssemblyLocation )
+                );
+            }
+
+            this.FileUploadLocation = new DirectoryInfo(
+                Path.Combine( directory, "t53files" )
+            );
+        }
+
         // ---------------- Properties ----------------
+
+        // -------- Server Settings --------
+
+        public DirectoryInfo FileUploadLocation { get; init; }
+
+        /// <summary>
+        /// The user agent required in order to upload something.
+        /// All other user agents will be denied access.
+        /// 
+        /// Set to null to allow any user agent through.
+        /// </summary>
+        public string? T53UploadUserAgent { get; init; } = null;
+
+        /// <summary>
+        /// The user agent required in order to check the files that have
+        /// been uploaded.  All other user agents will be denied access.
+        /// 
+        /// Set to null to allow any user agent through.
+        /// </summary>
+        public string? T53FileCheckUserAgent { get; init; } = null;
+
+        public TimeSpan UploadCoolDownTime { get; init; } = TimeSpan.Zero;
+
+        /// <summary>
+        /// The maximum file size in bytes that is allowed to be uploaded.
+        /// 0 or less means no limit.
+        /// </summary>
+        public long MaximumFileSize { get; init; } = 0;
+
+        // -------- Web Settings --------
 
         /// <summary>
         /// Set this if the service is running not on the root
@@ -58,6 +112,8 @@ namespace BsaT53UploadServer.Web
         /// </summary>
         public string? MetricsUrl { get; init; } = null;
 
+        // -------- Log Settings --------
+
         /// <summary>
         /// Where to log information or greater messages to.
         /// Leave null for no logging to files.
@@ -73,7 +129,7 @@ namespace BsaT53UploadServer.Web
     {
         // ---------------- Functions ----------------
 
-        public static WebConfig FromEnvVar()
+        public static BsaT53ServerConfig FromEnvVar()
         {
             bool NotNull( string envName, out string envValue )
             {
@@ -81,7 +137,49 @@ namespace BsaT53UploadServer.Web
                 return string.IsNullOrWhiteSpace( envValue ) == false;
             }
 
-            var settings = new WebConfig();
+            var settings = new BsaT53ServerConfig();
+
+            if( NotNull( "T53_FILE_STAGING_DIRECTORY", out string stagingDir ) )
+            {
+                settings = settings with
+                {
+                    FileUploadLocation = new DirectoryInfo( stagingDir )
+                };
+            }
+
+            if( NotNull( "T53_UPLOAD_USER_AGENT", out string uploadUserAgent ) )
+            {
+                settings = settings with
+                {
+                    T53UploadUserAgent = uploadUserAgent
+                };
+            }
+
+            if( NotNull( "T53_FILE_CHECK_USER_AGENT", out string fileCheckUserAgent ) )
+            {
+                settings = settings with
+                {
+                    T53FileCheckUserAgent = fileCheckUserAgent
+                };
+            }
+
+            if( NotNull( "T53_UPLOAD_COOLDOWN_TIME", out string coolDownStr ) )
+            {
+                int minutes = int.Parse( coolDownStr );
+                settings = settings with
+                {
+                    UploadCoolDownTime = TimeSpan.FromMinutes( minutes )
+                };
+            }
+
+            if( NotNull( "T53_MAX_FILE_SIZE", out string fileSizeStr ) )
+            {
+                long bytes = long.Parse( fileSizeStr );
+                settings = settings with
+                {
+                    MaximumFileSize = bytes
+                };
+            }
 
             if( NotNull( "WEB_ALLOW_PORTS", out string allowPorts ) )
             {
@@ -141,7 +239,7 @@ namespace BsaT53UploadServer.Web
             return settings;
         }
 
-        public static void Validate( this WebConfig config )
+        public static void Validate( this BsaT53ServerConfig config )
         {
             var errors = new List<string>();
 
@@ -165,7 +263,7 @@ namespace BsaT53UploadServer.Web
             if( errors.Any() )
             {
                 throw new ListedValidationException(
-                    $"Error when validating {nameof( WebConfig )}",
+                    $"Error when validating {nameof( BsaT53ServerConfig )}",
                     errors
                 );
             }
