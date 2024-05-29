@@ -17,7 +17,9 @@
 //
 
 using BsaT53UploadServer.Web.Api;
+using BsaT53UploadServer.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using SethCS.Extensions;
 
 namespace BsaT53UploadServer.Web.Controllers
 {
@@ -41,17 +43,29 @@ namespace BsaT53UploadServer.Web.Controllers
             return NotFound();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Index( [FromForm] IFormFile file )
+        [HttpOptions]
+        [Route( "/Upload/DoUpload" )]
+        public IActionResult DoUpload( [FromForm] UploadModel model )
         {
-            if( this.Request.Method != "POST" )
+
+        }
+
+        [HttpPost]
+        [Route( "/Upload/DoUpload" )]
+        public async Task<IActionResult> DoUpload( [FromForm] UploadModel model )
+        {
+            if( "POST".EqualsIgnoreCase( this.Request.Method ) == false )
             {
-                return NotFound();
+                return NotFound( this.Request.Method );
+            }
+            else if( model is null )
+            {
+                return BadRequest( "Model is null" );
             }
 
             string? userAgent = this.Request.Headers.UserAgent;
 
-            UploadStatus status = await this.api.TryUpload( file, userAgent );
+            UploadStatus status = await this.api.TryUpload( model.File, userAgent );
             if( status == UploadStatus.Success )
             {
                 return Ok( status.GetErrorMessage() );
