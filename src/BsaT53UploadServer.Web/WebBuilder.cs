@@ -185,6 +185,13 @@ namespace BsaT53UploadServer.Web
             builder.Host.UseSerilog( this.statusLog );
 
             WebApplication app = builder.Build();
+
+            app.UseCors(
+                builder => builder
+                .WithOrigins( "http://localhost", "http://127.0.0.1", "https://edit.bsatroop53.com" )
+                .WithMethods( "GET", "OPTIONS", "POST" )
+            );
+
             if( string.IsNullOrWhiteSpace( webConfig.BasePath ) == false )
             {
                 app.Use(

@@ -43,20 +43,13 @@ namespace BsaT53UploadServer.Web.Controllers
             return NotFound();
         }
 
-        [HttpOptions]
-        [Route( "/Upload/DoUpload" )]
-        public IActionResult DoUpload( [FromForm] UploadModel model )
-        {
-
-        }
-
         [HttpPost]
         [Route( "/Upload/DoUpload" )]
         public async Task<IActionResult> DoUpload( [FromForm] UploadModel model )
         {
             if( "POST".EqualsIgnoreCase( this.Request.Method ) == false )
             {
-                return NotFound( this.Request.Method );
+                return NotFound();
             }
             else if( model is null )
             {
