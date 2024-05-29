@@ -44,8 +44,7 @@ namespace BsaT53UploadServer.Web.Controllers
         }
 
         [HttpPost]
-        [Route( "/Upload/DoUpload" )]
-        public async Task<IActionResult> DoUpload( [FromForm] UploadModel model )
+        public async Task<IActionResult> Index( [FromForm] UploadModel model )
         {
             if( "POST".EqualsIgnoreCase( this.Request.Method ) == false )
             {
@@ -55,8 +54,14 @@ namespace BsaT53UploadServer.Web.Controllers
             {
                 return BadRequest( "Model is null" );
             }
+            else if( model.File is null )
+            {
+                return BadRequest( "File is null" );
+            }
 
             string? userAgent = this.Request.Headers.UserAgent;
+
+            this.api.StatusLog.Verbose( "Request User Agent: " + ( userAgent ?? "[null]" ) );
 
             UploadStatus status = await this.api.TryUpload( model.File, userAgent );
             if( status == UploadStatus.Success )

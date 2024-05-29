@@ -188,8 +188,9 @@ namespace BsaT53UploadServer.Web
 
             app.UseCors(
                 builder => builder
-                .WithOrigins( "http://localhost", "http://127.0.0.1", "https://edit.bsatroop53.com" )
+                .AllowAnyOrigin()
                 .WithMethods( "GET", "OPTIONS", "POST" )
+                .WithHeaders( "user-agent" )
             );
 
             if( string.IsNullOrWhiteSpace( webConfig.BasePath ) == false )
