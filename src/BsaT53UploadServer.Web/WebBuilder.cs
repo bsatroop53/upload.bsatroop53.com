@@ -190,7 +190,7 @@ namespace BsaT53UploadServer.Web
                 builder => builder
                 .AllowAnyOrigin()
                 .WithMethods( "GET", "OPTIONS", "POST" )
-                .WithHeaders( "user-agent" )
+                .WithHeaders( "user-agent", "content-type" )
             );
 
             if( string.IsNullOrWhiteSpace( webConfig.BasePath ) == false )
