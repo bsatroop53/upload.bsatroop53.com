@@ -18,5 +18,5 @@
 
 namespace BsaT53UploadServer.Web.Models
 {
-    public record class UploadModel( IFormFile File );
+    public record class UploadModel( IFormFile File, string? Key );
 }

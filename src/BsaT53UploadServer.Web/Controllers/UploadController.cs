@@ -62,8 +62,9 @@ namespace BsaT53UploadServer.Web.Controllers
             string? userAgent = this.Request.Headers.UserAgent;
 
             this.api.StatusLog.Verbose( "Request User Agent: " + ( userAgent ?? "[null]" ) );
+            this.api.StatusLog.Verbose( "Request OTP: " + ( model.Key ?? "[null]" ) );
 
-            UploadStatus status = await this.api.TryUpload( model.File, userAgent );
+            UploadStatus status = await this.api.TryUpload( model.File, userAgent, model.Key );
             if( status == UploadStatus.Success )
             {
                 return Ok( status.GetErrorMessage() );

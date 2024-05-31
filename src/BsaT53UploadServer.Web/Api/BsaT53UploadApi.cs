@@ -16,8 +16,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using OtpNet;
 
 namespace BsaT53UploadServer.Web.Api
 {
@@ -33,6 +35,8 @@ namespace BsaT53UploadServer.Web.Api
         private readonly BsaT53ServerConfig config;
 
         private readonly long startTime;
+
+        private readonly Totp? otpGenerator;
 
         // ---------------- Constructor ----------------
 
@@ -50,6 +54,18 @@ namespace BsaT53UploadServer.Web.Api
             this.config = config;
 
             this.startTime = Stopwatch.GetTimestamp();
+
+            if( config.OtpKey is not null )
+            {
+                byte[] key = Convert.FromBase64String( config.OtpKey );
+                this.otpGenerator = new Totp(
+                    key,
+                    step: 30,
+                    mode: OtpHashMode.Sha512,
+                    totpSize: 8,
+                    timeCorrection: null
+                );
+            }
         }
 
         // ---------------- Properties ----------------
@@ -71,13 +87,27 @@ namespace BsaT53UploadServer.Web.Api
             }
         }
 
-        public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent )
+        public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent, string? otpCode )
         {
-            return await TryUpload( file, userAgent, Stopwatch.GetTimestamp );
+            return await TryUpload( file, userAgent, otpCode, Stopwatch.GetTimestamp );
         }
 
-        public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent, Func<long> getTimeStamp )
+        public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent, string? otpCode, Func<long> getTimeStamp )
         {
+            if( this.otpGenerator is not null )
+            {
+                if( otpCode is null )
+                {
+                    return UploadStatus.MissingKey;
+                }
+                bool keyMatch = this.otpGenerator.VerifyTotp( otpCode, out long _, VerificationWindow.RfcSpecifiedNetworkDelay );
+
+                if( keyMatch == false )
+                {
+                    return UploadStatus.InvalidKey;
+                }
+            }
+
             if( this.config.T53UploadUserAgent is not null )
             {
                 if( userAgent != this.config.T53UploadUserAgent )
@@ -116,11 +146,21 @@ namespace BsaT53UploadServer.Web.Api
 
             string fullPath = Path.Combine( this.config.FileUploadLocation.FullName, newFileName );
 
-            using( Stream iStream = file.OpenReadStream() )
+            try
             {
-                using( Stream oStream = new FileStream( fullPath, FileMode.OpenOrCreate, FileAccess.Write ) )
+                using( Stream iStream = file.OpenReadStream() )
                 {
-                    await iStream.CopyToAsync( oStream );
+                    using( Stream oStream = new FileStream( fullPath, FileMode.OpenOrCreate, FileAccess.Write ) )
+                    {
+                        await iStream.CopyToAsync( oStream );
+                    }
+                }
+            }
+            finally
+            {
+                if( OperatingSystem.IsLinux() && File.Exists( fullPath ) )
+                {
+                    File.SetUnixFileMode( fullPath, UnixFileMode.UserRead );
                 }
             }
 

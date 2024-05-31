@@ -30,7 +30,11 @@ namespace BsaT53UploadServer.Web.Api
 
         InvalidFileType = 4,
 
-        InvalidFileName = 5
+        InvalidFileName = 5,
+
+        InvalidKey = 6,
+
+        MissingKey = 7
     }
 
     public static class UploadStatusExtensions
@@ -56,6 +60,12 @@ namespace BsaT53UploadServer.Web.Api
 
                 case UploadStatus.InvalidFileName:
                     return "Invalid File Name.";
+
+                case UploadStatus.MissingKey:
+                    return "Key Not Found.";
+
+                case UploadStatus.InvalidKey:
+                    return "Invalid Key. Check your PC's clock and make sure its set correctly.";
 
                 default:
                     return "Unknown Error!";

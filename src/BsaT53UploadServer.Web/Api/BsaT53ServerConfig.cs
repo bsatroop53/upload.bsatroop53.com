@@ -66,6 +66,8 @@ namespace BsaT53UploadServer.Web.Api
         /// </summary>
         public long MaximumFileSize { get; init; } = 0;
 
+        public string? OtpKey { get; init; } = null;
+
         // -------- Web Settings --------
 
         /// <summary>
@@ -168,6 +170,14 @@ namespace BsaT53UploadServer.Web.Api
                 settings = settings with
                 {
                     MaximumFileSize = bytes
+                };
+            }
+
+            if( NotNull( "T53_OTP_KEY", out string otpKey ) )
+            {
+                settings = settings with 
+                {
+                    OtpKey = otpKey
                 };
             }
 

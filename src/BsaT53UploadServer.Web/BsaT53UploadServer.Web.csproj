@@ -11,6 +11,7 @@
 	<PackageReference Include="Markdig" />
 	<PackageReference Include="Microsoft.AspNetCore.HttpOverrides" />
 	<PackageReference Include="Mono.Options" />
+	<PackageReference Include="Otp.NET" />
 	<PackageReference Include="prometheus-net.AspNetCore" />
 	<PackageReference Include="Serilog" />
 	<PackageReference Include="Serilog.AspNetCore" />
