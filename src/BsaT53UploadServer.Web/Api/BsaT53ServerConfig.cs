@@ -66,7 +66,7 @@ namespace BsaT53UploadServer.Web.Api
         /// </summary>
         public long MaximumFileSize { get; init; } = 0;
 
-        public string? OtpKey { get; init; } = null;
+        public FileInfo? OtpKeyFile { get; init; } = null;
 
         // -------- Web Settings --------
 
@@ -173,11 +173,11 @@ namespace BsaT53UploadServer.Web.Api
                 };
             }
 
-            if( NotNull( "T53_OTP_KEY", out string otpKey ) )
+            if( NotNull( "T53_OTP_KEY_FILE", out string otpKey ) )
             {
                 settings = settings with 
                 {
-                    OtpKey = otpKey
+                    OtpKeyFile = new FileInfo( otpKey )
                 };
             }
 
@@ -258,6 +258,11 @@ namespace BsaT53UploadServer.Web.Api
             if( config.BaseUri is null )
             {
                 errors.Add( $"{nameof( config.BaseUri )} must be specified." );
+            }
+
+            if( config.OtpKeyFile?.Exists == false )
+            {
+                errors.Add( $"{config.OtpKeyFile.FullName} file does not exist." );
             }
 
             if( errors.Any() )

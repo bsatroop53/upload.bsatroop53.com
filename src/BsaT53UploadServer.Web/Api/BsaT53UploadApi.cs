@@ -36,7 +36,7 @@ namespace BsaT53UploadServer.Web.Api
 
         private readonly long startTime;
 
-        private readonly Totp? otpGenerator;
+        private Totp? otpGenerator;
 
         // ---------------- Constructor ----------------
 
@@ -54,18 +54,6 @@ namespace BsaT53UploadServer.Web.Api
             this.config = config;
 
             this.startTime = Stopwatch.GetTimestamp();
-
-            if( config.OtpKey is not null )
-            {
-                byte[] key = Convert.FromBase64String( config.OtpKey );
-                this.otpGenerator = new Totp(
-                    key,
-                    step: 30,
-                    mode: OtpHashMode.Sha512,
-                    totpSize: 8,
-                    timeCorrection: null
-                );
-            }
         }
 
         // ---------------- Properties ----------------
@@ -84,6 +72,27 @@ namespace BsaT53UploadServer.Web.Api
             {
                 this.StatusLog.Information( $"Creating staging directory at {this.config.FileUploadLocation.FullName}" );
                 Directory.CreateDirectory( this.config.FileUploadLocation.FullName );
+            }
+
+            RegenerateKey();
+        }
+
+        public void RegenerateKey()
+        {
+            if( config.OtpKeyFile is not null )
+            {
+                this.StatusLog.Information( "Regenerating OTP Key" );
+
+                string otpKey = File.ReadAllText( this.config.OtpKeyFile.FullName ).Trim();
+
+                byte[] key = Convert.FromBase64String( otpKey );
+                this.otpGenerator = new Totp(
+                    key,
+                    step: 30,
+                    mode: OtpHashMode.Sha512,
+                    totpSize: 8,
+                    timeCorrection: null
+                );
             }
         }
 
