@@ -36,7 +36,9 @@ namespace BsaT53UploadServer.Web.Api
 
         MissingKey = 7,
 
-        FileTooSmall = 8
+        FileTooSmall = 8,
+
+        DownForMaintenance = 9
     }
 
     public static class UploadStatusExtensions
@@ -71,6 +73,9 @@ namespace BsaT53UploadServer.Web.Api
 
                 case UploadStatus.FileTooSmall:
                     return "File is too small.";
+
+                case UploadStatus.DownForMaintenance:
+                    return "Site is down for maintenance.  Please try again later.";
 
                 default:
                     return "Unknown Error!";

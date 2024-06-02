@@ -16,7 +16,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using OtpNet;
@@ -38,6 +37,8 @@ namespace BsaT53UploadServer.Web.Api
 
         private Totp? otpGenerator;
 
+        private bool isInMaintenanceMode;
+
         // ---------------- Constructor ----------------
 
         public BsaT53UploadApi(
@@ -52,11 +53,35 @@ namespace BsaT53UploadServer.Web.Api
             this.StatusLog = statusLog;
             this.NotificationLog = notificationLog;
             this.config = config;
+            this.IsInMaintenanceMode = false;
 
             this.startTime = Stopwatch.GetTimestamp();
         }
 
         // ---------------- Properties ----------------
+
+        public bool IsInMaintenanceMode
+        {
+            get => this.isInMaintenanceMode;
+            set
+            {
+                if( value == this.isInMaintenanceMode ) 
+                {
+                    return;
+                }
+
+                this.isInMaintenanceMode = value;
+
+                if( this.isInMaintenanceMode )
+                {
+                    this.StatusLog.Information( "Maintenance Mode Enabled." );
+                }
+                else
+                {
+                    this.StatusLog.Information( "Maintenance Mode Disabled." );
+                }
+            }
+        }
 
         public Serilog.ILogger StatusLog { get; }
 
@@ -103,6 +128,11 @@ namespace BsaT53UploadServer.Web.Api
 
         public async Task<UploadStatus> TryUpload( IFormFile file, string? userAgent, string? otpCode, Func<long> getTimeStamp )
         {
+            if( this.IsInMaintenanceMode )
+            {
+                return UploadStatus.DownForMaintenance;
+            }
+
             if( this.otpGenerator is not null )
             {
                 if( otpCode is null )

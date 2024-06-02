@@ -69,6 +69,10 @@ namespace BsaT53UploadServer.Web.Controllers
             {
                 return Ok( status.GetErrorMessage() );
             }
+            else if( status == UploadStatus.DownForMaintenance )
+            {
+                return StatusCode( 503, status.GetErrorMessage() );
+            }
             else
             {
                 return BadRequest( status.GetErrorMessage() );
