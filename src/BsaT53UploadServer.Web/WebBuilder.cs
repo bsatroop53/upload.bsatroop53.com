@@ -16,11 +16,14 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System.Threading.RateLimiting;
 using BsaT53UploadServer.Web.Api;
+using BsaT53UploadServer.Web.Controllers;
 using BsaT53UploadServer.Web.Jobs;
 using BsaT53UploadServer.Web.Logging;
 using dotenv.net;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Mono.Options;
 using Prometheus;
 using Quartz;
@@ -183,6 +186,10 @@ namespace BsaT53UploadServer.Web
             builder.Services.AddSingleton( api );
 
             AddQuartz( webConfig, builder );
+            if( EnableRateLimiting( webConfig, builder ) )
+            {
+                statusLog.Information( "Rate Limiting Enabled" );
+            }
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -277,6 +284,9 @@ namespace BsaT53UploadServer.Web
                 pattern: "{controller=Home}/{action=Index}/{id?}"
             );
 
+            // Per MS's documentation, this must come after UseRouting().
+            app.UseRateLimiter();
+
             app.Run();
         }
 
@@ -340,6 +350,40 @@ namespace BsaT53UploadServer.Web
             }
 
             return log;
+        }
+
+        private static bool EnableRateLimiting( BsaT53ServerConfig webConfig, WebApplicationBuilder builder )
+        {
+            if( webConfig.UploadCoolDownTime <= TimeSpan.Zero )
+            {
+                return false;
+            }
+
+            builder.Services.AddRateLimiter(
+                ( RateLimiterOptions options ) =>
+                {
+                    options.AddFixedWindowLimiter(
+                        UploadController.RateLimitPolicy,
+                        ( FixedWindowRateLimiterOptions fixedWindowOptions ) =>
+                        {
+                            fixedWindowOptions.PermitLimit = 1;
+                            fixedWindowOptions.Window = webConfig.UploadCoolDownTime;
+                            fixedWindowOptions.QueueLimit = 1;
+                            fixedWindowOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                        }
+                    );
+
+                    options.OnRejected = ( OnRejectedContext context, CancellationToken token ) =>
+                    {
+                        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+                        context.HttpContext.Response.WriteAsync( UploadStatus.TooManyRequests.GetErrorMessage() );
+
+                        return new ValueTask();
+                    };
+                }
+            );
+
+            return true;
         }
 
         private static void AddQuartz( BsaT53ServerConfig webConfig, WebApplicationBuilder builder )

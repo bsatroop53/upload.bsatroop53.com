@@ -38,7 +38,9 @@ namespace BsaT53UploadServer.Web.Api
 
         FileTooSmall = 8,
 
-        DownForMaintenance = 9
+        DownForMaintenance = 9,
+
+        TooManyRequests = 10
     }
 
     public static class UploadStatusExtensions
@@ -76,6 +78,9 @@ namespace BsaT53UploadServer.Web.Api
 
                 case UploadStatus.DownForMaintenance:
                     return "Site is down for maintenance.  Please try again later.";
+
+                case UploadStatus.TooManyRequests:
+                    return "Too many requests. Please try again in a couple of minutes.";
 
                 default:
                     return "Unknown Error!";

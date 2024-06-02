@@ -19,9 +19,11 @@
 using System.Diagnostics;
 using BsaT53UploadServer.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BsaT53UploadServer.Web.Controllers
 {
+    [DisableRateLimiting]
     public class HomeController : Controller
     {
         // ---------------- Constructor ----------------

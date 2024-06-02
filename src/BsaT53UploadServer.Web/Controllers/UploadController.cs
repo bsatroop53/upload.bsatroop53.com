@@ -19,13 +19,16 @@
 using BsaT53UploadServer.Web.Api;
 using BsaT53UploadServer.Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SethCS.Extensions;
 
 namespace BsaT53UploadServer.Web.Controllers
 {
-    public class UploadController : Controller
+    public sealed class UploadController : Controller
     {
         // ---------------- Fields ----------------
+
+        internal const string RateLimitPolicy = "upload_policy";
 
         private readonly BsaT53UploadApi api;
 
@@ -38,12 +41,14 @@ namespace BsaT53UploadServer.Web.Controllers
 
         // ---------------- Methods ----------------
 
+        [DisableRateLimiting]
         public IActionResult Index()
         {
             return NotFound();
         }
 
         [HttpPost]
+        [EnableRateLimiting( RateLimitPolicy )]
         public async Task<IActionResult> Index( [FromForm] UploadModel model )
         {
             if( "POST".EqualsIgnoreCase( this.Request.Method ) == false )
