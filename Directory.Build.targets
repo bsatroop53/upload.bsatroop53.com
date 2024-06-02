@@ -8,6 +8,7 @@
     <PackageReference Update="Mono.Options" Version="6.12.0.148" />
     <PackageReference Update="Otp.NET" Version="1.4.0" />
     <PackageReference Update="prometheus-net.AspNetCore" Version="8.2.1" />
+    <PackageReference Update="Quartz.Extensions.Hosting" Version="3.9.0" />
     <PackageReference Update="Serilog" Version="3.1.1" />
     <PackageReference Update="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Update="Serilog.Extensions.Logging" Version="8.0.0" />

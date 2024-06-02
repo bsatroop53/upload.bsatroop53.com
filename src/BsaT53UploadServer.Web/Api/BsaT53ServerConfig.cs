@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using Quartz;
 using SethCS.Exceptions;
 
 namespace BsaT53UploadServer.Web.Api
@@ -72,7 +73,27 @@ namespace BsaT53UploadServer.Web.Api
         /// </summary>
         public long MaximumFileSize { get; init; } = 0;
 
+        /// <summary>
+        /// File that contains the base 64 string of the OTP key file.
+        /// </summary>
         public FileInfo? OtpKeyFile { get; init; } = null;
+
+        /// <summary>
+        /// Cron string to enable the maintenance window,
+        /// when all requests are ignored.
+        /// </summary>
+        public string? MaintenanceWindowStart { get; init; } = null;
+
+        /// <summary>
+        /// Cron string to disable the maintenance window,
+        /// when requests can be processed again.
+        /// </summary>
+        public string? MaintenanceWindowEnd { get; init; } = null;
+
+        /// <summary>
+        /// Cron string to re-read the key specified in <see cref="OtpKeyFile"/>.
+        /// </summary>
+        public string? ReloadKeyTime { get; init; } = null;
 
         // -------- Web Settings --------
 
@@ -196,6 +217,30 @@ namespace BsaT53UploadServer.Web.Api
                 };
             }
 
+            if( NotNull( "T53_START_MAINTENANCE", out string startMaintenanceStr ) )
+            {
+                settings = settings with
+                {
+                    MaintenanceWindowStart = startMaintenanceStr
+                };
+            }
+
+            if( NotNull( "T53_END_MAINTENANCE", out string endMaintenanceStr ) )
+            {
+                settings = settings with
+                {
+                    MaintenanceWindowEnd = endMaintenanceStr
+                };
+            }
+
+            if( NotNull( "T53_RELOAD_KEY", out string reloadKeyStr ) )
+            {
+                settings = settings with
+                {
+                    ReloadKeyTime = reloadKeyStr
+                };
+            }
+
             if( NotNull( "WEB_ALLOW_PORTS", out string allowPorts ) )
             {
                 settings = settings with
@@ -278,6 +323,30 @@ namespace BsaT53UploadServer.Web.Api
             if( config.OtpKeyFile?.Exists == false )
             {
                 errors.Add( $"{config.OtpKeyFile.FullName} file does not exist." );
+            }
+
+            if( config.MaintenanceWindowStart is not null )
+            {
+                if( CronExpression.IsValidExpression( config.MaintenanceWindowStart ) == false )
+                {
+                    errors.Add( $"{nameof( config.MaintenanceWindowStart )} is invalid cron string: {config.MaintenanceWindowStart}" );
+                }
+            }
+
+            if( config.MaintenanceWindowEnd is not null )
+            {
+                if( CronExpression.IsValidExpression( config.MaintenanceWindowEnd ) == false )
+                {
+                    errors.Add( $"{nameof( config.MaintenanceWindowEnd )} is invalid cron string: {config.MaintenanceWindowEnd}" );
+                }
+            }
+
+            if( config.ReloadKeyTime is not null )
+            {
+                if( CronExpression.IsValidExpression( config.ReloadKeyTime ) == false )
+                {
+                    errors.Add( $"{nameof( config.ReloadKeyTime )} is invalid cron string: {config.ReloadKeyTime}" );
+                }
             }
 
             if( errors.Any() )

@@ -17,11 +17,13 @@
 //
 
 using BsaT53UploadServer.Web.Api;
+using BsaT53UploadServer.Web.Jobs;
 using BsaT53UploadServer.Web.Logging;
 using dotenv.net;
 using Microsoft.AspNetCore.HttpOverrides;
 using Mono.Options;
 using Prometheus;
+using Quartz;
 using Serilog;
 using Serilog.Sinks.Telegram.Alternative;
 
@@ -180,6 +182,8 @@ namespace BsaT53UploadServer.Web
             builder.Services.AddSingleton( webConfig );
             builder.Services.AddSingleton( api );
 
+            AddQuartz( webConfig, builder );
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Host.UseSerilog( this.statusLog );
@@ -336,6 +340,60 @@ namespace BsaT53UploadServer.Web
             }
 
             return log;
+        }
+
+        private static void AddQuartz( BsaT53ServerConfig webConfig, WebApplicationBuilder builder )
+        {
+            void AddTrigger<TJob>( IServiceCollectionQuartzConfigurator quartz, string cronTrigger )
+                where TJob : IJob
+            {
+                JobKey jobKey = JobKey.Create( typeof( TJob ).Name );
+                quartz.AddJob<TJob>( jobKey );
+
+                quartz.AddTrigger(
+                    ( ITriggerConfigurator config ) =>
+                    {
+                        config.WithCronSchedule(
+                            cronTrigger,
+                            ( CronScheduleBuilder cronBuilder ) =>
+                            {
+                                cronBuilder.InTimeZone( TimeZoneInfo.Local );
+                            }
+                        );
+
+                        config.WithDescription( typeof( TJob ).Name );
+                        config.ForJob( jobKey );
+                    }
+                );
+            }
+
+            builder.Services.AddQuartz(
+                ( IServiceCollectionQuartzConfigurator quartz ) =>
+                {
+                    if( webConfig.MaintenanceWindowStart is not null )
+                    {
+                        AddTrigger<StartMaintenanceJob>( quartz, webConfig.MaintenanceWindowStart );
+                    }
+
+                    if( webConfig.MaintenanceWindowEnd is not null )
+                    {
+                        AddTrigger<EndMaintenanceJob>( quartz, webConfig.MaintenanceWindowEnd );
+                    }
+
+                    if( ( webConfig.ReloadKeyTime is not null ) && ( webConfig.OtpKeyFile is not null ) )
+                    {
+                        AddTrigger<ReloadKeyJob>( quartz, webConfig.ReloadKeyTime );
+                    }
+                }
+            );
+
+            builder.Services.AddQuartzHostedService(
+                options =>
+                {
+                    options.AwaitApplicationStarted = true;
+                    options.WaitForJobsToComplete = false;
+                }
+            );
         }
 
         private void OnTelegramFailure( Exception e )
