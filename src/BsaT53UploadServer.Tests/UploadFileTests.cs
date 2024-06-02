@@ -102,7 +102,7 @@ namespace BsaT53UploadServer.Tests
             using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
 
             // Act
-            UploadStatus status = uut.TryUpload( file.Object, null ).Result;
+            UploadStatus status = uut.TryUpload( file.Object, null, null ).Result;
 
             // Check
             Assert.AreEqual( UploadStatus.InvalidUserAgent, status );
@@ -126,7 +126,7 @@ namespace BsaT53UploadServer.Tests
             using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
 
             // Act
-            UploadStatus status = uut.TryUpload( file.Object, "A different agent" ).Result;
+            UploadStatus status = uut.TryUpload( file.Object, "A different agent", null ).Result;
 
             // Check
             Assert.AreEqual( UploadStatus.InvalidUserAgent, status );
@@ -163,7 +163,7 @@ namespace BsaT53UploadServer.Tests
             using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
 
             // Act
-            UploadStatus status = uut.TryUpload( file.Object, null ).Result;
+            UploadStatus status = uut.TryUpload( file.Object, null, null ).Result;
 
             // Check
             Assert.AreEqual( UploadStatus.InvalidFileExtension, status );
@@ -183,7 +183,7 @@ namespace BsaT53UploadServer.Tests
             using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
 
             // Act
-            UploadStatus status = uut.TryUpload( file.Object, null ).Result;
+            UploadStatus status = uut.TryUpload( file.Object, null, null ).Result;
 
             // Check
             Assert.AreEqual( UploadStatus.InvalidFileExtension, status );
@@ -203,7 +203,7 @@ namespace BsaT53UploadServer.Tests
             using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
 
             // Act
-            UploadStatus status = uut.TryUpload( file.Object, null ).Result;
+            UploadStatus status = uut.TryUpload( file.Object, null, null ).Result;
 
             // Check
             Assert.AreEqual( UploadStatus.InvalidFileType, status );
@@ -228,7 +228,7 @@ namespace BsaT53UploadServer.Tests
             using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
 
             // Act
-            UploadStatus status = uut.TryUpload( file.Object, null ).Result;
+            UploadStatus status = uut.TryUpload( file.Object, null, null ).Result;
 
             // Check
             Assert.AreEqual( UploadStatus.FileTooBig, status );
@@ -265,6 +265,71 @@ namespace BsaT53UploadServer.Tests
             };
 
             const string fileName = nameof( FileLessThanLimitTest ) + zipExtension;
+
+            ExpectSuccessTest(
+                config,
+                fileName,
+                null,
+                fileContents
+            );
+        }
+
+        [TestMethod]
+        public void FileTooSmallTest()
+        {
+            // Setup
+            const string fileContents = "123";
+            var config = new BsaT53ServerConfig
+            {
+                MinimumFileSize = fileContents.Length + 1
+            };
+
+            const string fileName = nameof( FileTooSmallTest ) + zipExtension;
+
+            var file = new Mock<IFormFile>( MockBehavior.Strict );
+            file.Setup( m => m.FileName ).Returns( fileName );
+            file.Setup( m => m.Length ).Returns( fileContents.Length );
+
+            using BsaT53UploadApi uut = new BsaT53UploadApi( this.statusLog?.Object, this.notificationLog?.Object, config );
+
+            // Act
+            UploadStatus status = uut.TryUpload( file.Object, null, null ).Result;
+
+            // Check
+            Assert.AreEqual( UploadStatus.FileTooSmall, status );
+        }
+
+        [TestMethod]
+        public void FileEqualToMinSizeTest()
+        {
+            // Setup
+            const string fileContents = "123";
+            var config = new BsaT53ServerConfig
+            {
+                MinimumFileSize = fileContents.Length
+            };
+
+            const string fileName = nameof( FileEqualToMinSizeTest ) + zipExtension;
+
+            ExpectSuccessTest(
+                config,
+                fileName,
+                null,
+                fileContents
+            );
+        }
+
+        [TestMethod]
+        public void FileLessThanMinSizeTest()
+        {
+            // Setup
+            const string fileContents = "123";
+            var config = new BsaT53ServerConfig
+            {
+                MinimumFileSize = fileContents.Length - 1
+            };
+
+            const string fileName = nameof( FileLessThanMinSizeTest ) + zipExtension;
 
             ExpectSuccessTest(
                 config,
@@ -318,7 +383,7 @@ namespace BsaT53UploadServer.Tests
                 }
 
                 // Act
-                UploadStatus status = uut.TryUpload( file.Object, clientUserAgent, () => timeStamp ).Result;
+                UploadStatus status = uut.TryUpload( file.Object, clientUserAgent, null, () => timeStamp ).Result;
 
                 // Check
                 Assert.AreEqual( UploadStatus.Success, status );

@@ -34,7 +34,9 @@ namespace BsaT53UploadServer.Web.Api
 
         InvalidKey = 6,
 
-        MissingKey = 7
+        MissingKey = 7,
+
+        FileTooSmall = 8
     }
 
     public static class UploadStatusExtensions
@@ -66,6 +68,9 @@ namespace BsaT53UploadServer.Web.Api
 
                 case UploadStatus.InvalidKey:
                     return "Invalid Key. Check your PC's clock and make sure its set correctly.";
+
+                case UploadStatus.FileTooSmall:
+                    return "File is too small.";
 
                 default:
                     return "Unknown Error!";

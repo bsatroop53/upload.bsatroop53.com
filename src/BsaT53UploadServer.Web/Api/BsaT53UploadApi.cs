@@ -125,6 +125,14 @@ namespace BsaT53UploadServer.Web.Api
                 }
             }
 
+            if( this.config.MinimumFileSize > 0 )
+            {
+                if( file.Length < this.config.MinimumFileSize )
+                {
+                    return UploadStatus.FileTooSmall;
+                }
+            }
+
             if( this.config.MaximumFileSize > 0 )
             {
                 if( file.Length > this.config.MaximumFileSize )

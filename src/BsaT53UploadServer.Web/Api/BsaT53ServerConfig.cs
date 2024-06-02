@@ -61,6 +61,12 @@ namespace BsaT53UploadServer.Web.Api
         public TimeSpan UploadCoolDownTime { get; init; } = TimeSpan.Zero;
 
         /// <summary>
+        /// The minimum file size in bytes that is allowed to be uploaded.
+        /// 0 or less means no limit.
+        /// </summary>
+        public long MinimumFileSize { get; init; } = 0;
+
+        /// <summary>
         /// The maximum file size in bytes that is allowed to be uploaded.
         /// 0 or less means no limit.
         /// </summary>
@@ -164,9 +170,18 @@ namespace BsaT53UploadServer.Web.Api
                 };
             }
 
-            if( NotNull( "T53_MAX_FILE_SIZE", out string fileSizeStr ) )
+            if( NotNull( "T53_MIN_FILE_SIZE", out string minFileSizeStr ) )
             {
-                long bytes = long.Parse( fileSizeStr );
+                long bytes = long.Parse( minFileSizeStr );
+                settings = settings with
+                {
+                    MinimumFileSize = bytes
+                };
+            }
+
+            if( NotNull( "T53_MAX_FILE_SIZE", out string maxFileSizeStr ) )
+            {
+                long bytes = long.Parse( maxFileSizeStr );
                 settings = settings with
                 {
                     MaximumFileSize = bytes
