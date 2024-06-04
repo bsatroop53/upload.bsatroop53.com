@@ -186,9 +186,12 @@ namespace BsaT53UploadServer.Web
             builder.Services.AddSingleton( api );
 
             AddQuartz( webConfig, builder );
-            if( EnableRateLimiting( webConfig, builder ) )
+
+            bool rateLimitingEnabled = EnableRateLimiting( webConfig, builder );
+            statusLog.Information( $"Rate Limiting Enabled: {rateLimitingEnabled}." );
+            if( rateLimitingEnabled )
             {
-                statusLog.Information( "Rate Limiting Enabled" );
+                statusLog.Information( $"Rate Limit: {webConfig.UploadCoolDownTime.TotalMinutes:0} Minutes." );
             }
 
             // Add services to the container.
@@ -264,6 +267,12 @@ namespace BsaT53UploadServer.Web
             }
 
             app.UseRouting();
+            if( rateLimitingEnabled )
+            {
+                // Per MS's documentation, this must come after UseRouting().
+                app.UseRateLimiter();
+            }
+
             if( webConfig.MetricsUrl is not null )
             {
                 // Per https://learn.microsoft.com/en-us/aspnet/core/diagnostics/asp0014?view=aspnetcore-8.0:
@@ -283,9 +292,6 @@ namespace BsaT53UploadServer.Web
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}"
             );
-
-            // Per MS's documentation, this must come after UseRouting().
-            app.UseRateLimiter();
 
             app.Run();
         }
@@ -368,8 +374,9 @@ namespace BsaT53UploadServer.Web
                         {
                             fixedWindowOptions.PermitLimit = 1;
                             fixedWindowOptions.Window = webConfig.UploadCoolDownTime;
-                            fixedWindowOptions.QueueLimit = 1;
+                            fixedWindowOptions.QueueLimit = 0; // <- Do not queue any before rejecting.
                             fixedWindowOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                            fixedWindowOptions.AutoReplenishment = true;
                         }
                     );
 
