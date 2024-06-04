@@ -62,7 +62,7 @@ namespace DevOps.Publish
 
             //CopyRootFile( context, "Readme.md" );
             //CopyRootFile( context, "Credits.md" );
-            CopyRootFile( context, "LICENSE.md" );
+            CopyRootFile( context, "License.md" );
         }
 
         private static void CopyRootFile( BuildContext context, FilePath fileName )
