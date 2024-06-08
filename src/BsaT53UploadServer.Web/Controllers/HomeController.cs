@@ -16,6 +16,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+using System;
 using System.Diagnostics;
 using BsaT53UploadServer.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,12 @@ Disallow: /"
         public IActionResult Privacy()
         {
             return Redirect( "https://edit.bsatroop53.com/privacy" );
+        }
+
+        [Route( "/datetime.txt" )]
+        public IActionResult GetDateTime()
+        {
+            return Ok( DateTime.UtcNow.Ticks.ToString() );
         }
 
         [ResponseCache( Duration = 0, Location = ResponseCacheLocation.None, NoStore = true )]
