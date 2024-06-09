@@ -6,6 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
   <ItemGroup>
 	<PackageReference Include="dotenv.net" />
 	<PackageReference Include="Markdig" />
